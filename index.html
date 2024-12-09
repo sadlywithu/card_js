@@ -1,0 +1,215 @@
+<div class="t-redactor__embedcode">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .card {
+            margin-left: auto;
+            margin-right: auto;
+            width: 362px;
+            height: 645px;
+            max-width: 85%;
+            perspective: 1000px;
+            margin-top: 1vh;
+        }
+
+        .card__inner {
+            width: 100%;
+            height: 100%;
+            transition: transform 1.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .fastRotate {
+            transition: transform 0.8s;
+        }
+
+        .card__inner.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+
+        .card__face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            overflow: hidden;
+            border-radius: 16px;
+            border: 4px solid rgb(40, 88, 0);
+            box-shadow: 0px 3px 18px 3px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        .card__face--front {
+            background-image: url(https://optim.tildacdn.com/tild3934-6332-4837-a437-373835633238/-/format/webp/cardFaceUpd.jpg);
+            /*background-image: url(https://optim.tildacdn.com/tild3965-3932-4832-b534-376237633035/-/format/webp/mainTop1.jpg);*/
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card__face--back {
+            background-image: url(https://optim.tildacdn.com/tild3664-6361-4334-a232-663435343465/-/format/webp/01.jpg);
+            background-size: cover;
+            transform: rotateY(180deg);
+            position: relative;
+        }
+    </style>
+
+
+
+
+    <div class="card">
+        <div class="card__inner fastRotate">
+            <div class="card__face card__face--front">
+            </div>
+            <div id="cardBack" class="card__face card__face--back"
+                style="background-image: url(&quot;https://optim.tildacdn.com/tild3633-3132-4461-b839-366336306232/-/format/webp/riverNsky.jpg&quot;);">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let newCardUrl;
+        const originalCards =
+            [
+                "url(https://optim.tildacdn.com/tild3664-6361-4334-a232-663435343465/-/format/webp/01.jpg)",
+                "url(https://optim.tildacdn.com/tild3435-3235-4034-a330-373762343061/-/format/webp/02.jpg)",
+                "url(https://optim.tildacdn.com/tild6537-3264-4638-b561-613061393436/-/format/webp/03.jpg)",
+
+            ];
+        // фото 20, 30, 31 нет в галереи, и нет в массиве originalCards!!!
+        // фото 10, 38, 41 тоже
+        // итого 64 фото в массиве (коллекции)
+
+
+        let cards = originalCards.slice(); //слайсит массив с картинками
+
+        let openCardId = getrandomId
+
+        const card = document.querySelector(".card__inner"); //ищет объект по началу класса
+
+        card.addEventListener("click", mainFlipper); //добавляет событие, которое по клику вызывает функцию мейн флиппер
+
+        let classBack = document.getElementById('cardBack'); //вызов элемента по айди
+        //classBack.style.backgroundImage = newCardUrl; //присвоение бэкграунду фон одной из карточек
+
+        //elem.classList – это специальный объект с методами для добавления/удаления одного класса из объекта
+        //Если мы присваиваем что-то elem.className, то это заменяет всю строку с классами. Иногда это то, что нам нужно, но часто мы хотим добавить/удалить один класс.
+
+        function mainFlipper() {
+            if (card.classList.contains('is-flipped')) { //contains возвращает true или false если parent содержит child  || parent == child 
+
+                card.classList.toggle('is-flipped'); //добавляет класс, если его нет, удаляет класс, если он есть
+
+                card.classList.add('fastRotate'); //добавляет класс
+            } else {
+                card.classList.remove('fastRotate');//удаляет класс
+                let newCardUrl = idGen(cards.length); //генерирует уникальный идентификатор на основе длины массива, то есть это функция, описанная ниже
+
+                //classBack.style.backgroundImage = newCardUrl;// присвоение бэкграунду уникальный идентификатор
+                card.classList.toggle('is-flipped');
+                getSortImg();
+                openCardId = getrandomId();
+                sortPhotoArray(unicCard);
+                getSortImg();
+            };
+        }
+
+        let unicCard = cards.slice();
+        console.log(unicCard.length)
+        //sortPhotoArray(unicCard);
+
+        let randomIndex = 0;
+
+        function getSortImg() {
+            if (randomIndex <= unicCard.length) {
+                classBack.style.backgroundImage = unicCard[randomIndex]
+                randomIndex++;
+            } else {
+                console.log('обновить страницу')
+                randomIndex = 0; 
+            }
+
+        }
+
+        function idGen(cards_length) {
+            let openCardUrl;
+
+            cards.forEach((element, index) => {
+                if (index === openCardId) {
+                    openCardUrl = element;
+                }
+                
+            });
+
+            return openCardUrl;
+        };
+
+        // функция апдейтит бекграунд и выводит каждый фон по очереди
+        function updateBackground() { 
+            classBack.style.backgroundImage = cards[currentIndex]
+           
+        }
+
+        // апдейт фона рандомного
+        function updateBackgroundRandom() {
+            classBack.style.backgroundImage = cards[openCardId];
+        }
+
+        function getrandomId() {
+            randomId = Math.floor(Math.random() * 3) 
+            return randomId
+        }
+
+        //тоже не нужно
+        // let last_elem = 0;
+
+        // let uniccardTWo = cards.slice();
+
+        // let unicCard = uniccardTWo.filter((elem, ind) => {
+        //     return uniccardTWo.indexOf(elem) === ind;
+        // });
+
+        function sortPhotoArray(unicCard) {
+
+            //не нужный код пока что
+            // let two_array = cards.slice();
+            // console.log(two_array)
+            
+            // let unicCard = two_array.filter((elem, ind) => {
+            //     return two_array.indexOf(elem) === ind;
+            // });
+
+            // let filteredUniqCard = [];
+
+            // unicCard.forEach((elem, index) => {
+            //     if (index === 0 || elem !== filteredUniqCard[filteredUniqCard.length - 1]) {
+            //         filteredUniqCard.push(elem);
+            //     }
+            // });
+
+            // console.log(unicCard);
+            // console.log(filteredUniqCard)
+            // //console.log(cards[openCardId])
+            // return filteredUniqCard
+
+            for(let i = unicCard.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [unicCard[i], unicCard[j]] = [unicCard[j], unicCard[i]]
+            }
+            // classBack.style.backgroundImage = unicCard[0]
+            // return unicCard
+
+        }
+
+
+    </script>
+</div>
